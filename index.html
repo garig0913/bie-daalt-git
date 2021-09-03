@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<style>
+   * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+   }
+
+   #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+   }
+
+   .modal {
+      width: full;
+      height: full;
+      z-index: 112;
+   }
+
+   .menu-container {
+      width: 230px;
+      height: 60vh;
+      background-color: #4e484a;
+   }
+
+   .tools {
+      width: full;
+      height: 8%;
+   }
+
+   .btnCont {
+      transition-duration: 150ms;
+   }
+
+   .btnCont:hover {
+      background-color: rgb(37, 131, 255);
+      color: aliceblue;
+   }
+
+   #canvasClr {
+      /* w-4 h-4 bg-white bg-black mt-1.5 mx-3 border-2 border-light-blue-500 */
+      width: 1.03rem;
+      height: 1.03rem;
+      margin-top: 0.375rem;
+      margin-left: 0.6rem;
+      border: 2px solid lightblue;
+      border-radius: 5px;
+   }
+
+   #palette {
+      z-index: 153;
+   }
+
+   #paintRoller {
+      z-index: 1550;
+   }
+
+   #brushColor {
+      position: absolute;
+      top: 5rem;
+      right: .4rem;
+      z-index: 150;
+      width: 13.5rem;
+   }
+
+   #fillColor {
+      position: absolute;
+      top: 5.1rem;
+      right: .4rem;
+      z-index: 150;
+      width: 13.5rem;
+   }
+
+   /* #fillColorTxt {
+        position: absolute;
+        top: 5.5rem;
+        right: .5rem;
+        z-index: 151;
+        width: 14rem;
+    } */
+
+   #fillColor::placeholder,
+   #fillColorTxt::placeholder {
+      line-height: normal;
+      padding: 0 .3rem;
+   }
+
+   .sliderCont {
+      width: 90%;
+      height: 11%;
+      border-bottom: 2px solid rgb(15, 15, 15);
+   }
+
+   .sliderCont2 {
+      width: 90%;
+      height: 12rem;
+      border-top: 2px solid rgb(15, 15, 15);
+   }
+
+   .shapes {
+      background-repeat: no-repeat;
+      background-size: cover;
+   }
+
+   .x {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 5000;
+      text-shadow: 0 0 1px blue;
+      color: #e0a537;
+
+   }
+
+   .x:hover {
+      color: black;
+      text-shadow: 0 0 1px blue;
+      text-shadow: 0 0 1px aliceblue;
+   }
+
+   .colorSelector {
+      position: absolute;
+      top: 130px;
+      right: 45px;
+   }
+
+   .colorSelectorFill {
+      position: absolute;
+      top: 112px;
+      right: 70px;
+      z-index: 150;
+   }
+
+   .colorSelectorBrush {
+      position: absolute;
+      top: 112px;
+      right: 70px;
+      z-index: 150;
+   }
+
+   .inputBrushCont {
+      z-index: 150;
+   }
+
+   .lineto {
+      position: absolute;
+      top: 5rem;
+      right: 10rem;
+      z-index: 1000;
+   }
+
+   .pencil {
+      position: absolute;
+      top: 5rem;
+      right: 12.4rem;
+      z-index: 1000;
+   }
+</style>
+
+<body>
+   <div class="modal w-full h-full absolute top-0 left-0 bg-black opacity-70 hidden"></div>
+
+   <canvas class="" id="canvas"></canvas>
+
+   <button class="x absolute top-0 right-10 text-2xl"><i class="fas fa-times"></i></button>
+
+
+   <div class="brushtools hidden">
+      <div
+         class="lineto btnCont w-9 h-8 mx-0.5 ml-1 border border-black rounded flex justify-center items-center bg-gray-400">
+         <button class="text-2xl">
+            <i class="fas fa-draw-polygon"></i>
+         </button>
+      </div>
+      <div
+         class="pencil btnCont w-9 h-8 mx-0.5 ml-1 border border-black rounded flex justify-center items-center bg-gray-400">
+         <button class="text-xl">
+            <i class="fas fa-pencil-alt"></i>
+         </button>
+      </div>
+   </div>
+
+
+
+
+
+   <div class="menu-container absolute top-0 right-0 border-l-4 border-yellow-800 rounded-sm">
+      <div class="menu w-full h-full block justify-between">
+         <p class="mx-1 text-gray-300 mt-4 text-lg">Tools:</p>
+         <div class="tools flex">
+            <div
+               class="paint btnCont w-11 h-8 mx-0.5 ml-1 border-2 border-black rounded flex justify-center items-center bg-gray-400">
+               <button class="text-xl">
+                  <i class="fas fa-paint-brush"></i>
+               </button>
+            </div>
+            <div id="palette"
+               class="btnCont w-11 h-8 mx-0.5 border-2 border-black rounded flex justify-center items-center bg-gray-400">
+               <button class="text-xl">
+                  <i class="fas fa-palette"></i>
+               </button>
+            </div>
+            <div
+               class="eraser btnCont w-11 h-8 mx-0.5 border-2 border-black rounded flex justify-center items-center bg-gray-400">
+               <button class="text-xl">
+                  <i class="fas fa-eraser"></i>
+               </button>
+            </div>
+            <div id="paintRoller"
+               class="fillColor btnCont w-11 h-8 mx-0.5 border-2 border-black rounded flex justify-center items-center bg-gray-400">
+               <button class="text-xl">
+                  <i class="fas fa-paint-roller"></i>
+               </button>
+            </div>
+            <div
+               class="trash btnCont w-14 h-8 mx-0.5 border-2 border-black rounded flex justify-center items-center bg-gray-300">
+               <button class="text-xl">
+                  <i class="fas fa-trash-alt"></i>
+               </button>
+            </div>
+         </div>
+
+
+         <div class="background flex">
+            <p class="text-gray-300 ml-2">Canvas Background:</p>
+            <button id="canvasClr" class="bg-white"></button>
+            <button id="canvasBtn"
+               class="bg-black bg-white mt-1.5 ml-2 w-4 h-4 border-2 border-light-blue-500"></button>
+         </div>
+
+
+         <input id="brushColor" class="hidden" type="text" placeholder="Insert Color by name or RGB">
+
+
+         <input id="fillColor" class="hidden" type="text" placeholder="Insert Color by name or RGB">
+
+
+         <div class="colorSelector grid grid-cols-6 bg-gray-900 rounded border-4 border-light-blue-500 hidden">
+            <button class="bg-gray-200 #E5E7EB w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-gray-300 #D1D5DB w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-gray-400 #9CA3AF w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-gray-600 #4B5563 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-gray-800 #1F2937 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-gray-900 #111827 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-red-100 #FEE2E2 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-red-200 #FECACA w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-red-300 #FCA5A5 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-red-500 #EF4444 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-red-700 #B91C1C w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-red-900 #7F1D1D w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-yellow-100 #FEF3C7 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-yellow-200 #FDE68A w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-yellow-300 #FCD34D w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-yellow-500 #F59E0B w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-yellow-700 #B45309 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-yellow-900 #78350F w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-green-100 #D1FAE5 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-green-200 #A7F3D0 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-green-300 #6EE7B7 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-green-500 #10B981 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-green-700 #047857 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-green-900 #064E3B w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-blue-100 #DBEAFE w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-blue-200 #BFDBFE w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-blue-300 #93C5FD w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-blue-500 #3B82F6 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-blue-700 #1D4ED8 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-blue-900 #1E3A8A w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-pink-100 #FCE7F3 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-pink-200 #FBCFE8 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-pink-300 #F9A8D4 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-pink-500 #EC4899 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-pink-700 #BE185D w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+            <button class="bg-pink-900 #831843 w-6 h-6 border-4 border-gray-800  rounded-sm colorCubes"></button>
+         </div>
+
+         <div class="sliderCont ml-2 mt-2">
+            <h1 id="range" class="text-gray-300"></h1>
+            <input id="slider" class="w-full" type="range" min="1" max="100" value="35">
+         </div>
+
+         <div class="m-2 pt-2 text-red-400 flex">
+            <p>Rainbow:</p>
+            <button id="rainbow" class="w-4 h-4 bg-black mt-1.5 mx-3 border-2 border-light-blue-500">
+            </button>
+         </div>
+
+         <div class="mx-2 text-red-400 flex">
+            <p>Shadow:</p>
+            <button class="w-4 h-4 bg-green-400 mt-1.5 mx-4 border-2 border-light-blue-500 shadow">
+            </button>
+         </div>
+
+         <!-- <div class="shapesDemo grid grid-cols-4 gap-1 mt-4 w-full h-20">
+                <button class="shapes border rounded star" style="background-image: url(./img/star3.PNG);"></button>
+                <button class="shapes border rounded circle" style="background-image: url(./img/circle3.PNG);"></button>
+                <button class="shapes border rounded hex" style="background-image: url(./img/pentagram.PNG);"></button>
+                <button class="shapes border rounded rhombus"
+                    style="background-image: url(./img/rhombus3.PNG);"></button>
+                <button class="shapes border rounded tri" style="background-image: url(./img/triangle.PNG);"></button>
+                <button class="shapes border rounded six" style="background-image: url(./img/6star.PNG);"></button>
+                <button class="shapes border rounded chakram"
+                    style="background-image: url(./img/chakram2.PNG);"></button>
+                <button class="shapes border rounded spike" style="background-image: url(./img/spike2.PNG);"></button>
+            </div> -->
+
+
+
+         <div class="shapesDemo grid grid-cols-4 gap-1 pr-2 mt-4 w-full h-20">
+            <canvas id="demoCanvas1" class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white star"></canvas>
+            <canvas id="demoCanvas2"
+               class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white circle"></canvas>
+            <canvas id="demoCanvas3" class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white hex"></canvas>
+            <canvas id="demoCanvas4"
+               class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white rhombus"></canvas>
+            <canvas id="demoCanvas5" class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white tri"></canvas>
+            <canvas id="demoCanvas6" class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white six"></canvas>
+            <canvas id="demoCanvas7"
+               class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white chakram"></canvas>
+            <canvas id="demoCanvas8" class="border-4 border-gray-800 rounded-md demo h-10 w-14 bg-white spike"></canvas>
+         </div>
+
+
+
+         <canvas id="bigDemo" class="border-8 border-gray-800 rounded-md demo h-32 w-full bg-white star my-4"></canvas>
+
+
+
+         <!-- <div class="customShape mt-2 m-1">
+                <p class="text-gray-300">Custom:</p>
+                <input type="text" class="custom mt-1 mb-2 rounded w-16">
+                <input type="text" class="custom2 rounded w-16">
+            </div> -->
+
+         <div class="sliderCont2 ml-2 mt-6 items-end">
+            <h1 id="lineRange" class="text-gray-300 mt-2"></h1>
+            <p id="lineRange" class="text-gray-400 text-sm mb-0.5">(1 unit = half a pixel)</p>
+            <input id="lineSlider" class="w-full" type="range" min="0" max="100" value="10">
+         </div>
+
+
+      </div>
+
+   </div>
+
+
+   <script src="./script.js"></script>
+</body>
+
+</html>

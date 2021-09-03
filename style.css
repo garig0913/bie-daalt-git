@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+ }
+
+ #canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+ }
+
+ .modal {
+    width: full;
+    height: full;
+    z-index: 112;
+ }
+
+ .menu-container {
+    width: 230px;
+    height: 60vh;
+    background-color: #4e484a;
+ }
+
+ .tools {
+    width: full;
+    height: 8%;
+ }
+
+ .btnCont {
+    transition-duration: 150ms;
+ }
+
+ .btnCont:hover {
+    background-color: rgb(37, 131, 255);
+    color: aliceblue;
+ }
+
+ #canvasClr {
+    /* w-4 h-4 bg-white bg-black mt-1.5 mx-3 border-2 border-light-blue-500 */
+    width: 1.03rem;
+    height: 1.03rem;
+    margin-top: 0.375rem;
+    margin-left: 0.6rem;
+    border: 2px solid lightblue;
+    border-radius: 5px;
+ }
+
+ #palette {
+    z-index: 153;
+ }
+
+ #paintRoller {
+    z-index: 1550;
+ }
+
+ #brushColor {
+    position: absolute;
+    top: 5rem;
+    right: .4rem;
+    z-index: 150;
+    width: 13.5rem;
+ }
+
+ #fillColor {
+    position: absolute;
+    top: 5rem;
+    right: .4rem;
+    z-index: 150;
+    width: 13.5rem;
+ }
+
+ #fillColorTxt {
+    position: absolute;
+    top: 5.5rem;
+    right: .5rem;
+    z-index: 151;
+    width: 14rem;
+ }
+
+ #fillColor::placeholder,
+ #fillColorTxt::placeholder {
+    line-height: normal;
+    padding: 0 .3rem;
+ }
+
+ .sliderCont {
+    width: 90%;
+    height: 11%;
+    border-bottom: 2px solid rgb(15, 15, 15);
+ }
+
+ .sliderCont2 {
+    width: 90%;
+    height: 12rem;
+    border-top: 2px solid rgb(15, 15, 15);
+ }
+
+ .shapes {
+    background-repeat: no-repeat;
+    background-size: cover;
+ }
+
+ .x {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 5000;
+    text-shadow: 0 0 1px blue;
+    color: #e0a537;
+
+ }
+
+ .x:hover {
+    color: black;
+    text-shadow: 0 0 1px blue;
+    text-shadow: 0 0 1px aliceblue;
+ }
+
+ .colorSelector {
+    position: absolute;
+    top: 130px;
+    right: 45px;
+ }
